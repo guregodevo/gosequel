@@ -16,7 +16,18 @@ func main() {
     db := gosequel.DataB{"postgres", "localhost", "postgres", "postgres", "mydb", nil}
 	fmt.Printf("SQL Database - %v\n", db.Url())
 
+	fmt.Printf("listing the databases table available...\n")
+	connection := db.Opendb()
+	defer connection.Close()
 
+	rows := connection.Query("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'")
+	for rows.Next() {
+		var tablename string
+		err := rows.Scan(&tablename)
+		if err == nil {
+			fmt.Printf("** %v\n", tablename)
+		}
+	}
 }
 ```
 
