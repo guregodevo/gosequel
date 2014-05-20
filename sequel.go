@@ -96,7 +96,9 @@ func (db *DataB) StringToHStores(hstores string) []map[string]interface{} {
 		hstoreValue := map[string]interface{} {}
 		for _, hstoreEl := range strings.Split(hstore,",") {
 			keyValue := strings.SplitN(hstoreEl,"=>",2)
-			hstoreValue[CleanHStoreString(keyValue[0])] = CleanHStoreAny(keyValue[1])
+			if len(keyValue) == 2 {
+				hstoreValue[CleanHStoreString(keyValue[0])] = CleanHStoreAny(keyValue[1])
+			}
 		}
 		hstoresAsMap = append(hstoresAsMap,hstoreValue)
 	} 
