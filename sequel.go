@@ -72,7 +72,14 @@ func (db *DataB) Opendb() *sql.DB {
 }
 
 //PostgreSQL Goodies
-// HStore is built from a Map. The args is an array of map where each map represents an HStore element
+// ARRAY is built from a slice. The args is an array of string where each string represents an HStore element
+func (db *DataB) ArrayToString(a []string) string {
+	hstoreString := fmt.Sprintf("{ %s }", strings.Join(a, ", "))
+	return  hstoreString
+}
+
+//PostgreSQL Goodies
+// HStore is built from a Map. The args is a map where each key value represents an HStore element
 func (db *DataB) HStoreToString(m map[string]interface{}) string {
 	hstore := []string {}
 	for key, value := range m {
