@@ -75,7 +75,7 @@ func (db *DataB) Opendb() *sql.DB {
 // HStore is built from a Map. The args is an array of map where each map represents an HStore element
 func (db *DataB) HStoreToString(m map[string]interface{}) string {
 	hstore := []string {}
-	for key, value := range m[i] {
+	for key, value := range m {
 		hstore = append(hstore, fmt.Sprintf("%s => %v", key, value))
 	}
 	hstoreString := fmt.Sprintf("{ %s }", strings.Join(hstore, ", "))
@@ -88,7 +88,7 @@ func (db *DataB) HStoresToString(hstores []map[string]interface{}) string {
 	arraylen := len(hstores)
 	array := make([]string, arraylen, arraylen) 
 	for i := 0; i < len(hstores); i++ {
-		array[i] = HStoreToString(hstores[i]) 
+		array[i] = db.HStoreToString(hstores[i]) 
 	}
 	return fmt.Sprintf("{ %s }", strings.Join(array, ", ")) 
 }
