@@ -71,6 +71,16 @@ func (db *DataB) Opendb() *sql.DB {
 	return db.Wrappeddb
 }
 
+//PostgreSQL Goodies
+// HStore is built from a Map. The args is an array of map where each map represents an HStore element
+func (db *DataB) HStoreToString(m map[string]interface{}) string {
+	hstore := []string {}
+	for key, value := range m[i] {
+		hstore = append(hstore, fmt.Sprintf("%s => %v", key, value))
+	}
+	hstoreString := fmt.Sprintf("{ %s }", strings.Join(hstore, ", "))
+	return  hstoreString
+}
 
 //PostgreSQL Goodies
 // array of HStore is built from an array of Map. The args is an array of map where each map represents an HStore element
@@ -78,11 +88,7 @@ func (db *DataB) HStoresToString(hstores []map[string]interface{}) string {
 	arraylen := len(hstores)
 	array := make([]string, arraylen, arraylen) 
 	for i := 0; i < len(hstores); i++ {
-		hstore := []string {}
-		for key, value := range hstores[i] {
-    		hstore = append(hstore, fmt.Sprintf("%s => %v", key, value))
-		}
-		array[i] = fmt.Sprintf("{ %s }", strings.Join(hstore, ", "))
+		array[i] = HStoreToString(hstores[i]) 
 	}
 	return fmt.Sprintf("{ %s }", strings.Join(array, ", ")) 
 }
