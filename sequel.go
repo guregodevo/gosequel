@@ -50,13 +50,14 @@ func (db *DataB) Exec(query string, args ...interface{}) (sql.Result, error) {
 }
 
 //Query executes a query that returns rows, typically a SELECT. The args are for any placeholder parameters in the query.
-func (db *DataB) Query(query string, args ...interface{}) *sql.Rows {
+func (db *DataB) Query(query string, args ...interface{}) (*sql.Rows, error) {
 	log.Printf("Query of %q", query)
 	rows, err := db.Wrappeddb.Query(query, args...)
 	if err != nil {
-		log.Fatal("Exec of %q: %v", query, err)
+		log.Printf("ERROR: Exec of %q: %v", query, err)
+		return rows, err
 	}
-	return rows
+	return rows, nil
 }
 
 //Opendb opens a database specified by its database driver name and a driver-specific data source name, usually consisting of at least a database name and connection information.
@@ -85,8 +86,7 @@ func (db *DataB) HStoreToString(m map[string]interface{}) string {
 	for key, value := range m {
 		hstore = append(hstore, fmt.Sprintf("%s => %v", key, value))
 	}
-	hstoreString := fmt.Sprintf("{ %s }", strings.Join(hstore, ", "))
-	return  hstoreString
+	return  strings.Join(hstore, ", ")
 }
 
 //PostgreSQL Goodies
@@ -95,10 +95,38 @@ func (db *DataB) HStoresToString(hstores []map[string]interface{}) string {
 	arraylen := len(hstores)
 	array := make([]string, arraylen, arraylen) 
 	for i := 0; i < len(hstores); i++ {
-		array[i] = db.HStoreToString(hstores[i]) 
+		hstore := []string {}
+		for key, value := range hstores[i] {
+			hstore = append(hstore, fmt.Sprintf("%s => %v", key, value))
+		}
+		hstoreString := fmt.Sprintf("{ %s }", strings.Join(hstore, ", "))
+		array[i] = hstoreString 
 	}
 	return fmt.Sprintf("{ %s }", strings.Join(array, ", ")) 
 }
+
+func (db *DataB) StringToArray(array string) []string {
+	arrayValue := []string {}
+	arrayTrimed := strings.Trim(array, "{}")
+	for _, e := range strings.Split(arrayTrimed,",") {
+		arrayValue = append(arrayValue, e)
+	}
+	return arrayValue
+}
+
+
+func (db *DataB) StringToHStore(hstoreContent string) map[string]interface{} {
+	hstoreContent = strings.Trim(hstoreContent, "{}")
+	hstoreValue := map[string]interface{} {}
+	for _, hstoreEl := range strings.Split(hstoreContent,",") {
+		keyValue := strings.SplitN(hstoreEl,"=>",2)
+		if len(keyValue) == 2 {
+			hstoreValue[CleanHStoreString(keyValue[0])] = CleanHStoreAny(keyValue[1])
+		}
+	}
+	return hstoreValue
+}
+
 
 func (db *DataB) StringToHStores(hstores string) []map[string]interface{} {
 	hstoresAsMap := []map[string]interface{} {}

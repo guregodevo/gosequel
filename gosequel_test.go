@@ -1,7 +1,5 @@
 package gosequel
 
-
-
 import (
 	"testing"
 	"reflect"
