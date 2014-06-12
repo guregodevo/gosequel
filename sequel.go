@@ -90,6 +90,16 @@ func (db *DataB) HStoreToString(m map[string]interface{}) string {
 }
 
 //PostgreSQL Goodies
+// HStore is built from a Map. The args is a map where each key value represents an HStore element
+func (db *DataB) StringMapToHStore(m map[string]string) string {
+	hstore := []string {}
+	for key, value := range m {
+		hstore = append(hstore, fmt.Sprintf("%s => %v", key, value))
+	}
+	return  strings.Join(hstore, ", ")
+}
+
+//PostgreSQL Goodies
 // array of HStore is built from an array of Map. The args is an array of map where each map represents an HStore element
 func (db *DataB) HStoresToString(hstores []map[string]interface{}) string {
 	arraylen := len(hstores)
