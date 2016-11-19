@@ -20,7 +20,7 @@ func main() {
 	connection := db.Opendb()
 	defer connection.Close()
 
-	rows := connection.Query("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'")
+	rows, _ := connection.Query("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'")
 	for rows.Next() {
 		var tablename string
 		err := rows.Scan(&tablename)
