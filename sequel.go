@@ -22,7 +22,7 @@ type DataB struct {
 
 //Get Database URL
 func (config *DataB) Url() string {
-	return fmt.Sprintf("%v://%v:%v@%v/%v \n", config.Database, config.User, config.Password, config.Host, config.Databasename)
+	return fmt.Sprintf("%v://%v:%v@%v/%v", config.Database, config.User, config.Password, config.Host, config.Databasename)
 }
 
 //Query executes a query that returns a single row, typically a SELECT. The args are for any placeholder parameters in the query and scan. queryArgsLen serves as a delimiter to separate query parameters from scan parameters in args.
